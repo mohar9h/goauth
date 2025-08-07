@@ -1,8 +1,9 @@
-package goauth
+package config
 
 import (
 	"crypto/rsa"
 	"errors"
+	"github.com/mohar9h/goauth/internal/storage"
 	"time"
 )
 
@@ -45,7 +46,7 @@ func DefaultConfig() *Config {
 		SigningMethod:    "HS256",
 		SigningKey:       "test-key",
 		AbilityDelimiter: ":",
-		Storage:          storage2.NewMemoryDriver(),
+		Storage:          storage.NewMemoryDriver(),
 	}
 }
 

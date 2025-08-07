@@ -1,0 +1,15 @@
+package entity
+
+import "time"
+
+// Token APIToken defines the persistent structure stored in SQL/Redis.
+type Token struct {
+	ID         int64      `gorm:"primaryKey;autoIncrement"`
+	UserId     int64      `gorm:"index"`
+	Token      string     `gorm:"index;size:100"`
+	Name       *string    `gorm:"size:100"`
+	Abilities  string     `gorm:"type:text"`
+	CreatedAt  time.Time  `gorm:"autoCreateTime"`
+	ExpiresAt  *time.Time `gorm:"index"`
+	LastUsedAt *time.Time
+}
