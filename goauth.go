@@ -12,7 +12,7 @@ import (
 type TokenOptions = auth.TokenOptions
 type TokenResult = auth.Result
 
-type Token = entity.PersonalAccessToken
+type PersonalAccessToken = entity.PersonalAccessToken
 
 // CreateToken generates a new token using given options and configuration.
 func CreateToken(opts *TokenOptions) (string, error) {
