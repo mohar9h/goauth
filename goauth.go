@@ -1,3 +1,4 @@
+// Package goauth package goauth.go
 package goauth
 
 import (
@@ -11,7 +12,7 @@ import (
 type TokenOptions = auth.TokenOptions
 type TokenResult = auth.Result
 
-type Token = entity.Token
+type Token = entity.PersonalAccessToken
 
 // CreateToken generates a new token using given options and configuration.
 func CreateToken(opts *TokenOptions) (string, error) {
@@ -19,7 +20,7 @@ func CreateToken(opts *TokenOptions) (string, error) {
 }
 
 // ValidateToken checks if the given token string is valid and returns token info.
-func ValidateToken(raw string, cfg *config.Config) (*entity.Token, error) {
+func ValidateToken(raw string, cfg *config.Config) (*entity.PersonalAccessToken, error) {
 	return auth.ValidateToken(raw, cfg)
 }
 

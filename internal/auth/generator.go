@@ -1,3 +1,4 @@
+// Package auth internal/auth/generator.go
 package auth
 
 import (
@@ -40,7 +41,7 @@ func (g *generator) Create() (*Result, error) {
 		expireAt = &t
 	}
 
-	t := &entity.Token{
+	t := &entity.PersonalAccessToken{
 		UserId:    g.opts.UserId,
 		Name:      g.opts.Name,
 		Token:     hashed,

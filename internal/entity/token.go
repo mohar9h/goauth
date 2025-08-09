@@ -2,8 +2,8 @@ package entity
 
 import "time"
 
-// Token APIToken defines the persistent structure stored in SQL/Redis.
-type Token struct {
+// PersonalAccessToken APIToken defines the persistent structure stored in SQL/Redis.
+type PersonalAccessToken struct {
 	ID         int64      `gorm:"primaryKey;autoIncrement"`
 	UserId     int64      `gorm:"index"`
 	Token      string     `gorm:"index;size:100"`
@@ -13,3 +13,5 @@ type Token struct {
 	ExpiresAt  *time.Time `gorm:"index"`
 	LastUsedAt *time.Time
 }
+
+func (PersonalAccessToken) TableName() string { return "personal_access_tokens" }

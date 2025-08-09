@@ -1,3 +1,4 @@
+// Package storage internal/storage/gorm_driver.go
 package storage
 
 import (
@@ -15,13 +16,13 @@ func NewGormDriver(db *gorm.DB) Driver {
 	return &gormDriver{db: db}
 }
 
-func (g *gormDriver) StoreToken(t *entity.Token) error {
+func (g *gormDriver) StoreToken(t *entity.PersonalAccessToken) error {
 	return g.db.Create(t).Error
 }
 
-func (g *gormDriver) FindByID(id int64) (*entity.Token, error) {
+func (g *gormDriver) FindByID(id int64) (*entity.PersonalAccessToken, error) {
 
-	var t entity.Token
+	var t entity.PersonalAccessToken
 	if err := g.db.First(&t, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
@@ -32,8 +33,8 @@ func (g *gormDriver) FindByID(id int64) (*entity.Token, error) {
 	return &t, nil
 }
 
-func (g *gormDriver) FindByHash(hash string) (*entity.Token, error) {
-	var t entity.Token
+func (g *gormDriver) FindByHash(hash string) (*entity.PersonalAccessToken, error) {
+	var t entity.PersonalAccessToken
 
 	if err := g.db.First(&t, "token = ?", hash).Error; err != nil {
 		return nil, err
@@ -45,11 +46,11 @@ func (g *gormDriver) FindByHash(hash string) (*entity.Token, error) {
 }
 
 func (g *gormDriver) RevokeToken(id string) error {
-	return g.db.Delete(&entity.Token{}, "id = ?", id).Error
+	return g.db.Delete(&entity.PersonalAccessToken{}, "id = ?", id).Error
 }
 
 func (g *gormDriver) TouchLastUsed(id int64) error {
-	return g.db.Model(&entity.Token{}).
+	return g.db.Model(&entity.PersonalAccessToken{}).
 		Where("id = ?", id).
 		Update("last_used_at", time.Now()).
 		Error

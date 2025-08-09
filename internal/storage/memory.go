@@ -8,7 +8,7 @@ import (
 )
 
 type memoryDriver struct {
-	tokens map[string]*entity.Token // key is hashed token string
+	tokens map[string]*entity.PersonalAccessToken // key is hashed token string
 	mu     sync.RWMutex
 }
 
@@ -16,12 +16,12 @@ var _ Driver = (*memoryDriver)(nil)
 
 func NewMemoryDriver() Driver {
 	return &memoryDriver{
-		tokens: make(map[string]*entity.Token),
+		tokens: make(map[string]*entity.PersonalAccessToken),
 	}
 }
 
 // StoreToken stores the token using its hashed value as key
-func (m *memoryDriver) StoreToken(t *entity.Token) error {
+func (m *memoryDriver) StoreToken(t *entity.PersonalAccessToken) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.tokens[t.Token] = t
@@ -29,7 +29,7 @@ func (m *memoryDriver) StoreToken(t *entity.Token) error {
 }
 
 // FindByID looks up token by its internal ID (numeric)
-func (m *memoryDriver) FindByID(id int64) (*entity.Token, error) {
+func (m *memoryDriver) FindByID(id int64) (*entity.PersonalAccessToken, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 	for _, t := range m.tokens {
@@ -44,7 +44,7 @@ func (m *memoryDriver) FindByID(id int64) (*entity.Token, error) {
 }
 
 // FindByHash looks up token by its hashed token string
-func (m *memoryDriver) FindByHash(hash string) (*entity.Token, error) {
+func (m *memoryDriver) FindByHash(hash string) (*entity.PersonalAccessToken, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 	tok, ok := m.tokens[hash]

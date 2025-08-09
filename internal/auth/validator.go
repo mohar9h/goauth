@@ -11,7 +11,7 @@ import (
 
 var ErrTokenInvalid = errors.New("token is invalid or expired")
 
-func ValidateToken(raw string, cfg *config.Config) (*entity.Token, error) {
+func ValidateToken(raw string, cfg *config.Config) (*entity.PersonalAccessToken, error) {
 
 	if cfg == nil {
 		cfg = config.DefaultConfig()

@@ -1,3 +1,4 @@
+// Package auth internal/auth/create.go
 package auth
 
 import (
