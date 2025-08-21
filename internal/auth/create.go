@@ -17,7 +17,13 @@ func CreateToken(opts *TokenOptions) (string, error) {
 		cfg = config.DefaultConfig()
 	}
 	cfg.ApplyDefaults()
-	cfg.Storage = storage.NewGormDriver(opts.DB)
+
+	if cfg.Storage == nil {
+		if opts.DB == nil {
+			return "", fmt.Errorf("DB required to create storage")
+		}
+		cfg.Storage = storage.NewGormDriver(opts.DB)
+	}
 
 	if err := cfg.Validate(); err != nil {
 		return "", fmt.Errorf("invalid config: %w", err)
