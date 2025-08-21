@@ -21,7 +21,6 @@ func (g *gormDriver) StoreToken(t *entity.PersonalAccessToken) error {
 }
 
 func (g *gormDriver) FindByID(id int64) (*entity.PersonalAccessToken, error) {
-
 	var t entity.PersonalAccessToken
 	if err := g.db.First(&t, "id = ?", id).Error; err != nil {
 		return nil, err

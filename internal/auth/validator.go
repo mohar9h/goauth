@@ -18,6 +18,10 @@ func ValidateToken(raw string, cfg *config.Config) (*entity.PersonalAccessToken,
 	}
 	cfg.ApplyDefaults()
 
+	if strings.HasPrefix(raw, "Bearer ") {
+		raw = strings.TrimPrefix(raw, "Bearer ")
+	}
+
 	parts := strings.Split(raw, "|")
 	if len(parts) != 2 {
 		return nil, ErrTokenInvalid
