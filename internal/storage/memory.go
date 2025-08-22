@@ -1,3 +1,4 @@
+// Package storage internal/storage/memory.go
 package storage
 
 import (

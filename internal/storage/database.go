@@ -1,4 +1,4 @@
-// Package storage internal/storage/gorm_driver.go
+// Package storage internal/storage/database.go
 package storage
 
 import (

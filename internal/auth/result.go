@@ -1,3 +1,4 @@
+// Package auth internal/auth/result.go
 package auth
 
 // Result TokenResult is the result of a successful token creation.

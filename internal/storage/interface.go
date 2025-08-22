@@ -1,3 +1,4 @@
+// Package storage internal/storage/interface.go
 package storage
 
 import (

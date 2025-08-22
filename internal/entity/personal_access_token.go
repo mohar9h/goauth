@@ -1,3 +1,4 @@
+// Package entity internal/entity/personal_access_token.go
 package entity
 
 import "time"

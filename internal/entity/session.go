@@ -1,3 +1,4 @@
+// Package entity internal/entity/session.go
 package entity
 
 import "time"

@@ -11,6 +11,7 @@ import (
 
 type TokenOptions = auth.TokenOptions
 type TokenResult = auth.Result
+type Config = config.Config
 
 type PersonalAccessToken = entity.PersonalAccessToken
 

@@ -1,3 +1,4 @@
+// Package auth internal/auth/revoke.go
 package auth
 
 import (

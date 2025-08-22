@@ -1,3 +1,4 @@
+// Package auth internal/auth/validator.go
 package auth
 
 import (
