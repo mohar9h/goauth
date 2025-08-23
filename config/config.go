@@ -4,8 +4,9 @@ package config
 import (
 	"crypto/rsa"
 	"errors"
-	"github.com/mohar9h/goauth/internal/storage"
 	"time"
+
+	"github.com/mohar9h/goauth/internal/storage"
 )
 
 // Config holds the global settings for the auth package.
@@ -41,11 +42,11 @@ func (c *Config) Validate() error {
 // DefaultConfig returns a default config.
 func DefaultConfig() *Config {
 	return &Config{
-		TokenLength:      20,
+		TokenLength:      32, // Increased for better security
 		TokenPrefix:      "",
-		ExpireAt:         0,
+		ExpireAt:         24 * time.Hour, // Default 24 hour expiration
 		SigningMethod:    "HS256",
-		SigningKey:       "test-key",
+		SigningKey:       "", // Will be set by client
 		AbilityDelimiter: ":",
 		Storage:          storage.NewMemoryDriver(),
 	}

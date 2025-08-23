@@ -3,21 +3,26 @@ package storage
 
 import (
 	"errors"
-	"github.com/mohar9h/goauth/internal/entity"
 	"sync"
 	"time"
+
+	"github.com/mohar9h/goauth/internal/entity"
 )
 
 type memoryDriver struct {
-	tokens map[string]*entity.PersonalAccessToken // key is hashed token string
-	mu     sync.RWMutex
+	tokensByHash map[string]*entity.PersonalAccessToken // key is hashed token string
+	tokensByID   map[int64]*entity.PersonalAccessToken  // key is token ID for O(1) lookups
+	mu           sync.RWMutex
+	nextID       int64 // Auto-incrementing ID
 }
 
 var _ Driver = (*memoryDriver)(nil)
 
 func NewMemoryDriver() Driver {
 	return &memoryDriver{
-		tokens: make(map[string]*entity.PersonalAccessToken),
+		tokensByHash: make(map[string]*entity.PersonalAccessToken),
+		tokensByID:   make(map[int64]*entity.PersonalAccessToken),
+		nextID:       1,
 	}
 }
 
@@ -25,33 +30,44 @@ func NewMemoryDriver() Driver {
 func (m *memoryDriver) StoreToken(t *entity.PersonalAccessToken) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	m.tokens[t.Token] = t
+
+	// Assign ID if not set
+	if t.ID == 0 {
+		t.ID = m.nextID
+		m.nextID++
+	}
+
+	m.tokensByHash[t.Token] = t
+	m.tokensByID[t.ID] = t
 	return nil
 }
 
-// FindByID looks up token by its internal ID (numeric)
+// FindByID looks up token by its internal ID (numeric) - O(1) lookup
 func (m *memoryDriver) FindByID(id int64) (*entity.PersonalAccessToken, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	for _, t := range m.tokens {
-		if t.ID == id {
-			if t.ExpiresAt != nil && time.Now().After(*t.ExpiresAt) {
-				return nil, errors.New("t expired")
-			}
-			return t, nil
-		}
-	}
-	return nil, errors.New("t not found")
-}
 
-// FindByHash looks up token by its hashed token string
-func (m *memoryDriver) FindByHash(hash string) (*entity.PersonalAccessToken, error) {
-	m.mu.RLock()
-	defer m.mu.RUnlock()
-	tok, ok := m.tokens[hash]
+	tok, ok := m.tokensByID[id]
 	if !ok {
 		return nil, errors.New("token not found")
 	}
+
+	if tok.ExpiresAt != nil && time.Now().After(*tok.ExpiresAt) {
+		return nil, errors.New("token expired")
+	}
+	return tok, nil
+}
+
+// FindByHash looks up token by its hashed token string - O(1) lookup
+func (m *memoryDriver) FindByHash(hash string) (*entity.PersonalAccessToken, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+
+	tok, ok := m.tokensByHash[hash]
+	if !ok {
+		return nil, errors.New("token not found")
+	}
+
 	if tok.ExpiresAt != nil && time.Now().After(*tok.ExpiresAt) {
 		return nil, errors.New("token expired")
 	}
@@ -62,7 +78,14 @@ func (m *memoryDriver) FindByHash(hash string) (*entity.PersonalAccessToken, err
 func (m *memoryDriver) RevokeToken(hash string) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	delete(m.tokens, hash)
+
+	tok, ok := m.tokensByHash[hash]
+	if !ok {
+		return errors.New("token not found")
+	}
+
+	delete(m.tokensByHash, hash)
+	delete(m.tokensByID, tok.ID)
 	return nil
 }
 
@@ -70,12 +93,13 @@ func (m *memoryDriver) RevokeToken(hash string) error {
 func (m *memoryDriver) TouchLastUsed(id int64) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	for _, tok := range m.tokens {
-		if tok.ID == id {
-			now := time.Now()
-			tok.LastUsedAt = &now
-			return nil
-		}
+
+	tok, ok := m.tokensByID[id]
+	if !ok {
+		return errors.New("token not found")
 	}
-	return errors.New("token not found")
+
+	now := time.Now()
+	tok.LastUsedAt = &now
+	return nil
 }

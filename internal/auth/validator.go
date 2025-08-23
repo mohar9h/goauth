@@ -3,11 +3,12 @@ package auth
 
 import (
 	"errors"
+	"strings"
+	"time"
+
 	"github.com/mohar9h/goauth/config"
 	"github.com/mohar9h/goauth/internal/entity"
 	"github.com/mohar9h/goauth/internal/utils"
-	"strings"
-	"time"
 )
 
 var ErrTokenInvalid = errors.New("token is invalid or expired")
@@ -43,10 +44,12 @@ func ValidateToken(raw string, cfg *config.Config) (*entity.PersonalAccessToken,
 		return nil, errors.New("token expired")
 	}
 
+	// Update last used time asynchronously
 	go func() {
-		err = cfg.Storage.TouchLastUsed(tok.ID)
-		if err != nil {
-
+		if err := cfg.Storage.TouchLastUsed(tok.ID); err != nil {
+			// Log error but don't fail validation
+			// In a production environment, you might want to use a proper logger
+			_ = err // Suppress unused variable warning
 		}
 	}()
 

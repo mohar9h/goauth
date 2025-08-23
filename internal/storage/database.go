@@ -3,9 +3,10 @@ package storage
 
 import (
 	"errors"
+	"time"
+
 	"github.com/mohar9h/goauth/internal/entity"
 	"gorm.io/gorm"
-	"time"
 )
 
 type gormDriver struct {
@@ -44,8 +45,8 @@ func (g *gormDriver) FindByHash(hash string) (*entity.PersonalAccessToken, error
 	return &t, nil
 }
 
-func (g *gormDriver) RevokeToken(id string) error {
-	return g.db.Delete(&entity.PersonalAccessToken{}, "id = ?", id).Error
+func (g *gormDriver) RevokeToken(hash string) error {
+	return g.db.Delete(&entity.PersonalAccessToken{}, "token = ?", hash).Error
 }
 
 func (g *gormDriver) TouchLastUsed(id int64) error {
