@@ -2,7 +2,7 @@
 package storage
 
 import (
-	"errors"
+	"github.com/mohar9h/goauth/internal/utils"
 	"time"
 
 	"github.com/mohar9h/goauth/internal/entity"
@@ -28,7 +28,7 @@ func (g *gormDriver) FindByID(id int64) (*entity.PersonalAccessToken, error) {
 	}
 
 	if t.ExpiresAt != nil && time.Now().After(*t.ExpiresAt) {
-		return nil, errors.New("token expired")
+		return nil, utils.ErrTokenExpired
 	}
 	return &t, nil
 }
@@ -40,7 +40,7 @@ func (g *gormDriver) FindByHash(hash string) (*entity.PersonalAccessToken, error
 		return nil, err
 	}
 	if t.ExpiresAt != nil && time.Now().After(*t.ExpiresAt) {
-		return nil, errors.New("token expired")
+		return nil, utils.ErrTokenExpired
 	}
 	return &t, nil
 }

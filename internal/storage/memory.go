@@ -2,7 +2,7 @@
 package storage
 
 import (
-	"errors"
+	"github.com/mohar9h/goauth/internal/utils"
 	"sync"
 	"time"
 
@@ -49,11 +49,11 @@ func (m *memoryDriver) FindByID(id int64) (*entity.PersonalAccessToken, error) {
 
 	tok, ok := m.tokensByID[id]
 	if !ok {
-		return nil, errors.New("token not found")
+		return nil, utils.ErrTokenNotFound
 	}
 
 	if tok.ExpiresAt != nil && time.Now().After(*tok.ExpiresAt) {
-		return nil, errors.New("token expired")
+		return nil, utils.ErrTokenExpired
 	}
 	return tok, nil
 }
@@ -65,11 +65,11 @@ func (m *memoryDriver) FindByHash(hash string) (*entity.PersonalAccessToken, err
 
 	tok, ok := m.tokensByHash[hash]
 	if !ok {
-		return nil, errors.New("token not found")
+		return nil, utils.ErrTokenNotFound
 	}
 
 	if tok.ExpiresAt != nil && time.Now().After(*tok.ExpiresAt) {
-		return nil, errors.New("token expired")
+		return nil, utils.ErrTokenExpired
 	}
 	return tok, nil
 }
@@ -81,7 +81,7 @@ func (m *memoryDriver) RevokeToken(hash string) error {
 
 	tok, ok := m.tokensByHash[hash]
 	if !ok {
-		return errors.New("token not found")
+		return utils.ErrTokenNotFound
 	}
 
 	delete(m.tokensByHash, hash)
@@ -96,7 +96,7 @@ func (m *memoryDriver) TouchLastUsed(id int64) error {
 
 	tok, ok := m.tokensByID[id]
 	if !ok {
-		return errors.New("token not found")
+		return utils.ErrTokenNotFound
 	}
 
 	now := time.Now()

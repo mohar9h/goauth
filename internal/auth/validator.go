@@ -41,7 +41,7 @@ func ValidateToken(raw string, cfg *config.Config) (*entity.PersonalAccessToken,
 	}
 
 	if tok.ExpiresAt != nil && time.Now().After(*tok.ExpiresAt) {
-		return nil, errors.New("token expired")
+		return nil, utils.ErrTokenExpired
 	}
 
 	// Update last used time asynchronously
