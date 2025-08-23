@@ -24,7 +24,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/mohar9h/goauth/config"
@@ -255,57 +254,8 @@ func generateSecureKey() string {
 	return base64.StdEncoding.EncodeToString(key)
 }
 
-// Legacy compatibility types and functions
+// TokenOptions Legacy compatibility types and functions
 type TokenOptions = auth.TokenOptions
 type TokenResult = auth.Result
 type Config = config.Config
 type PersonalAccessToken = entity.PersonalAccessToken
-
-var (
-	legacyClient *Client
-	legacyOnce   sync.Once
-)
-
-// getLegacyClient returns a singleton client for legacy functions
-func getLegacyClient() (*Client, error) {
-	var err error
-	legacyOnce.Do(func() {
-		legacyClient, err = NewClient()
-	})
-	return legacyClient, err
-}
-
-// Legacy functions for backward compatibility
-// Deprecated: Use NewClient() and client methods instead
-func CreateToken(opts *TokenOptions) (string, error) {
-	client, err := getLegacyClient()
-	if err != nil {
-		return "", err
-	}
-	return client.CreateToken(context.Background(), opts)
-}
-
-// Deprecated: Use NewClient() and client methods instead
-func ValidateToken(raw string, cfg *config.Config) (*entity.PersonalAccessToken, error) {
-	client, err := getLegacyClient()
-	if err != nil {
-		return nil, err
-	}
-	return client.ValidateToken(context.Background(), raw)
-}
-
-// Deprecated: Use NewClient() and client methods instead
-func RevokeToken(raw string, cfg *config.Config) error {
-	client, err := getLegacyClient()
-	if err != nil {
-		return err
-	}
-	return client.RevokeToken(context.Background(), raw)
-}
-
-// Deprecated: Use NewClient() and client methods instead
-func SetupGorm(db *gorm.DB) *config.Config {
-	cfg := config.DefaultConfig()
-	cfg.Storage = storage.NewGormDriver(db)
-	return cfg
-}
