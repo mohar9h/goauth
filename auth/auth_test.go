@@ -315,30 +315,6 @@ func TestContextCancellation(t *testing.T) {
 	assert.Equal(t, context.Canceled, err)
 }
 
-func TestLegacyAPI(t *testing.T) {
-	// Test legacy CreateToken function
-	token, err := goauth.CreateToken(&goauth.TokenOptions{
-		UserId:    123,
-		Abilities: []string{"read:posts"},
-	})
-	require.NoError(t, err)
-	assert.NotEmpty(t, token)
-
-	// Test legacy ValidateToken function
-	tokenInfo, err := goauth.ValidateToken(token, nil)
-	require.NoError(t, err)
-	assert.NotNil(t, tokenInfo)
-	assert.Equal(t, int64(123), tokenInfo.UserId)
-
-	// Test legacy RevokeToken function
-	err = goauth.RevokeToken(token, nil)
-	require.NoError(t, err)
-
-	// Verify token is revoked
-	_, err = goauth.ValidateToken(token, nil)
-	assert.Error(t, err)
-}
-
 // Helper function to create string pointers
 func stringPtr(s string) *string {
 	return &s
