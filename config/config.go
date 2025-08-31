@@ -61,9 +61,6 @@ func (c *Config) ApplyDefaults() {
 	if c.TokenPrefix == "" {
 		c.TokenPrefix = def.TokenPrefix
 	}
-	if c.ExpireAt == 0 {
-		c.ExpireAt = def.ExpireAt
-	}
 	if c.SigningMethod == "" {
 		c.SigningMethod = def.SigningMethod
 	}
