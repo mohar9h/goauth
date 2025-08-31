@@ -4,7 +4,6 @@ package auth
 import (
 	"fmt"
 	"github.com/mohar9h/goauth/config"
-	"strconv"
 )
 
 func RevokeToken(raw string, cfg *config.Config) error {
@@ -13,7 +12,7 @@ func RevokeToken(raw string, cfg *config.Config) error {
 		return err
 	}
 
-	if err = cfg.Storage.RevokeToken(strconv.FormatInt(token.ID, 10)); err != nil {
+	if err = cfg.Storage.RevokeToken(token.Token); err != nil {
 		return fmt.Errorf("failed to revoke token: %w", err)
 	}
 
