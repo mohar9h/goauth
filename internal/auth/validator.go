@@ -20,8 +20,8 @@ func ValidateToken(raw string, cfg *config.Config) (*entity.PersonalAccessToken,
 	}
 	cfg.ApplyDefaults()
 
-	if strings.HasPrefix(raw, "Bearer ") {
-		raw = strings.TrimPrefix(raw, "Bearer ")
+	if after, ok := strings.CutPrefix(raw, "Bearer "); ok {
+		raw = after
 	}
 
 	parts := strings.Split(raw, "|")

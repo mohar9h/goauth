@@ -105,34 +105,43 @@ func WithMemoryStorage() Option {
 
 // NewClient creates a new authentication client with the given options
 func NewClient(opts ...Option) (*Client, error) {
-	// Generate secure default signing key if not provided
 	defaultKey := generateSecureKey()
 
 	client := &Client{
 		config: &config.Config{
-			TokenLength:      32, // Increased from 20 for better security
+			TokenLength:      32,
 			TokenPrefix:      "",
-			ExpireAt:         24 * time.Hour, // Default 24 hour expiration
+			ExpireAt:         24 * time.Hour,
 			SigningMethod:    "HS256",
 			SigningKey:       defaultKey,
 			AbilityDelimiter: ":",
 		},
-		storage: storage.NewMemoryDriver(), // Default to memory storage
+		storage: nil,
 	}
 
-	// Apply options
 	for _, opt := range opts {
 		if err := opt(client); err != nil {
 			return nil, fmt.Errorf("failed to apply option: %w", err)
 		}
 	}
 
-	// Validate configuration
 	if err := client.config.Validate(); err != nil {
 		return nil, fmt.Errorf("invalid configuration: %w", err)
 	}
 
+	// 🔍 Check storage is set
+	if client.storage == nil {
+		return nil, fmt.Errorf("goauth: no storage driver configured (call WithGormStorage or WithStorage)")
+	}
+
+	client.config.Storage = client.storage
+
 	return client, nil
+}
+
+// Storage exposes the current storage driver (for testing and validation)
+func (c *Client) Storage() storage.Driver {
+	return c.storage
 }
 
 // CreateToken generates a new token using the client's configuration

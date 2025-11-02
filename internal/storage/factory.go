@@ -6,17 +6,17 @@ import (
 	"gorm.io/gorm"
 )
 
-type StorageType string
+type Type string
 
 const (
-	Memory StorageType = "memory"
-	Gorm   StorageType = "gorm"
-	Redis  StorageType = "redis"
+	Memory Type = "memory"
+	Gorm   Type = "gorm"
+	Redis  Type = "redis"
 )
 
 // Config configuration for storage drivers
 type Config struct {
-	Type   StorageType
+	Type   Type
 	GormDB *gorm.DB
 	// RedisClient *redis.Client // اگر Redis اضافه کنید
 }
